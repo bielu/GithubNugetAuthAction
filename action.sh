@@ -1,8 +1,13 @@
 #!/bin/bash
 
 main(){
-	if [[ ! -f ~/NuGet.config ]]; then
-		echo '<?xml version="1.0" encoding="utf-8"?><configuration/>' > ~/NuGet.Config
+
+	if  [[ "$config" == "" ]]; then
+		config="~/NuGet.config"
+		echo "Note: config path defaulting to $config"
+	fi
+	if [[ ! -f $config ]]; then
+		echo '<?xml version="1.0" encoding="utf-8"?><configuration/>' > $config
 	fi
 
 	if [[ "$owner" == "" ]]; then
@@ -19,23 +24,22 @@ main(){
 		token=$GITHUB_TOKEN
 		echo "Note: using github token."
 	fi
-
-	echo "Authenticating to $owner NuPkg Source"
-
+	if  [[ "$repositoryLink" == "" ]]; then
+		repositoryLink="https://nuget.pkg.github.com/$owner/index.json"
+		echo "Note: fallback nuget repository link to  $repositoryLink"
+	fi
 	if [[ "$RUNNER_OS" == "Windows" ]]; then
-		configfile="$APPDATA\NuGet\NuGet.Config"
 		if [[ "$force_cleartext_storage" == "true" ]] || [[ -z "$force_cleartext_storage" ]]; then
 			extra_args=--store-password-in-clear-text
 		else
 			extra_args=
 		fi
 	else
-		configfile=~/NuGet.Config
 		extra_args=--store-password-in-clear-text
 	fi
-
-	dotnet nuget add source "https://nuget.pkg.github.com/$owner/index.json" \
-		--configfile $configfile \
+	echo "Authenticating to $owner NuPkg Source"
+	dotnet nuget add source $repositoryLink \
+		--configfile $config \
 		-n "$name" \
 		-u "$owner" \
 		-p "$token" \
