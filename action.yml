@@ -1,4 +1,4 @@
-name: 'GitHub NuGet Private Source Authorisation'
+name: 'GitHub Private repository auth injector'
 description: 'Authorises access to a private GitHub NuGet package source, so you can restore packages.'
 
 branding:
