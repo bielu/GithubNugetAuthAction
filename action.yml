@@ -10,6 +10,14 @@ inputs:
     description: "The owner of the NuPkg repository you would like to access, as displayed in their GitHub URL."
     required: false
     default: ${{ github.repository_owner }}
+  repositoryLink:
+    description: "The link to nuget repository."
+    required: false
+    default: ""
+  config:
+    description: "The path to nuget config file."
+    required: false
+    default: "./NuGet.config"
   name:
     description: "The name of the NuPkg source"
     required: false
@@ -34,6 +42,8 @@ runs:
           bash ${{ github.action_path }}/action.sh
         fi
       env:
+        config: "${{inputs.config}}"
+        repositoryLink: "${{inputs.repositoryLink}}"
         owner: "${{inputs.owner}}"
         name: "${{inputs.name}}"
         token: "${{inputs.token}}"
